@@ -2,71 +2,71 @@
 document.addEventListener("DOMContentLoaded", () => {
     const tempoEl = document.getElementById('tempo');
     const cronometroDiv = document.getElementById('cronometro');
-    
-    if (!tempoEl || !cronometroDiv) return;
 
-    // 1. Pega o link exato que está aberto no navegador
+    if (!cronometroDiv) return;
+
     const urlAtual = window.location.href.toLowerCase();
-    
-    // 2. Verifica se o usuário está dentro de uma das páginas de categoria
-    const ehPaginaInterna = urlAtual.includes('casa') || 
-                            urlAtual.includes('beleza') || 
-                            urlAtual.includes('setup') || 
-                            urlAtual.includes('eletronicos') || 
+    const ehPaginaInterna = urlAtual.includes('casa') ||
+                            urlAtual.includes('beleza') ||
+                            urlAtual.includes('setup') ||
+                            urlAtual.includes('eletronicos') ||
                             urlAtual.includes('ferramentas');
 
-    // 3. O REVERSO: Se NÃO for uma página interna, esconde!
-    // Ou seja, na sua tela inicial, o cronômetro some. Nas categorias, ele roda.
     if (!ehPaginaInterna) {
         cronometroDiv.style.display = 'none';
-        return; 
+        return;
     }
 
-    // 4. Lógica do cronômetro (só roda nas páginas das categorias)
-    const DURACAO_TOTAL = 7 * 60 * 1000; 
-    const TEMPO_DE_RESET = 24 * 60 * 60 * 1000; 
+    if (!tempoEl) return;
+
+    const DURACAO_TOTAL = 7 * 60 * 1000;
+    const TEMPO_DE_RESET = 24 * 60 * 60 * 1000;
 
     function obterDataFinal() {
-        // Mudei para v3 para o navegador esquecer o tempo esgotado e zerar o relógio!
-        let final = localStorage.getItem('oferta_final_v3');
-        let inicio = localStorage.getItem('oferta_inicio_v3');
         const agora = Date.now();
-        
-        if (!final || !inicio || agora >= parseInt(inicio) + TEMPO_DE_RESET) {
-            final = agora + DURACAO_TOTAL;
-            localStorage.setItem('oferta_final_v3', final);
-            localStorage.setItem('oferta_inicio_v3', agora); 
+        const inicio = Number(localStorage.getItem('oferta_inicio_v3'));
+        const final = Number(localStorage.getItem('oferta_final_v3'));
+
+        if (!Number.isFinite(inicio) || !Number.isFinite(final) || final <= agora || agora >= inicio + TEMPO_DE_RESET) {
+            const novoInicio = agora;
+            const novoFinal = agora + DURACAO_TOTAL;
+            localStorage.setItem('oferta_inicio_v3', String(novoInicio));
+            localStorage.setItem('oferta_final_v3', String(novoFinal));
+            return novoFinal;
         }
-        
-        return parseInt(final);
+
+        return final;
     }
 
     let dataFinal = obterDataFinal();
     let msVisual = 0;
 
-    const timer = setInterval(() => {
+    function atualizarCronometro() {
         let tempoRestante = dataFinal - Date.now();
 
         if (tempoRestante <= 0) {
-            clearInterval(timer);
-            const titulo = cronometroDiv.querySelector(".titulo");
-            if (titulo) titulo.remove();
-            tempoEl.textContent = "OFERTA QUASE ESGOTADA!";
-            tempoEl.classList.add("piscar");
+            tempoRestante = 0;
+            const titulo = cronometroDiv.querySelector('.titulo');
+            if (titulo) titulo.textContent = 'OFERTA QUASE ESGOTADA!';
+            tempoEl.textContent = '00:00:00';
+            tempoEl.classList.add('piscar');
             return;
         }
 
         let minutos = Math.floor(tempoRestante / 60000);
         let segundos = Math.floor((tempoRestante % 60000) / 1000);
-        
+
         minutos = minutos < 10 ? '0' + minutos : minutos;
         segundos = segundos < 10 ? '0' + segundos : segundos;
-        
+
         msVisual = (msVisual + 1) % 31;
-        let msText = msVisual < 10 ? '0' + msVisual : msVisual;
+        const msText = msVisual < 10 ? '0' + msVisual : msVisual;
 
         tempoEl.textContent = `${minutos}:${segundos}:${msText}`;
-    }, 33);
+    }
+
+    atualizarCronometro();
+    const timer = setInterval(atualizarCronometro, 33);
 });
 // ================= FIM DO CRONÔMETRO =================
 
@@ -85,74 +85,20 @@ function copiarID(codigo, botao) {
         });
 }
 
-// ================= OVERLAY TIKTOK =================
-window.addEventListener("DOMContentLoaded", () => {
-    const overlay = document.getElementById("overlay-tiktok");
-    if (!overlay) return;
-
-    const ua = navigator.userAgent || navigator.vendor || window.opera;
-    const isInApp = /TikTok|musical_ly|FBAN|FBAV|Instagram|Snapchat/i.test(ua);
-
-    if (isInApp && !localStorage.getItem("overlayVisto")) {
-        overlay.classList.add("active");
-        overlay.style.display = "flex"; 
-    } else {
-        overlay.style.display = "none";
-        overlay.remove(); 
-    }
-
-    if (/Android/i.test(ua)) {
-        document.body.classList.add("is-android");
-    } else if (/iPhone|iPad|iPod/i.test(ua)) {
-        document.body.classList.add("is-ios");
-    }
-});
-
-// ================= ABRIR NAVEGADOR (PLANO B) =================
-function abrirFora(event) {
-    if (event) event.preventDefault();
-    const btn = document.querySelector(".btn-principal");
-
-    if (btn) {
-        btn.innerHTML = "Siga o passo 1 e 2 acima ↑";
-        btn.style.background = "#111";
-        btn.style.color = "#0088ff";
-        btn.style.border = "1px solid #0088ff";
-        btn.classList.add("shake-effect");
-        btn.style.pointerEvents = "none"; 
-    }
-
-    if (/Android/i.test(navigator.userAgent)) {
-        const url = window.location.href;
-        let clean = url.replace(/^https?:\/\//, '');
-        window.location.href = "intent://" + clean + "#Intent;scheme=https;end;";
-    }
-}
-
-function fecharSeFora(event) {
-    const box = document.querySelector("#overlay-tiktok .box");
-    if (box && !box.contains(event.target)) {
-        continuarOverlay();
-    }
-}
-
-function fecharOverlay() {
-    const overlay = document.getElementById("overlay-tiktok");
-    if (overlay) {
-        overlay.classList.remove("active");
-        overlay.style.display = "none"; 
-    }
-}
-
-function continuarOverlay() {
-    fecharOverlay();
-}
-
 // ================= TRANSIÇÃO SUAVE (VERSÃO ANTI-BUG) =================
 document.addEventListener("click", (e) => {
     const link = e.target.closest("a");
 
     if (link && link.href.includes(window.location.origin) && !link.target) {
+        const cronometro = document.getElementById('cronometro');
+        if (cronometro) {
+            cronometro.style.display = 'none';
+            cronometro.style.opacity = '0';
+            cronometro.style.visibility = 'hidden';
+        }
+
+        document.body.classList.add('nav-transition');
+
         e.preventDefault();
         const url = link.href;
 
@@ -164,53 +110,21 @@ document.addEventListener("click", (e) => {
 
         const isVoltar = link.classList.contains("btn-voltar") || url.includes("index.html");
 
-        container.style.transition = "transform 0.4s ease, opacity 0.3s ease";
-        container.style.opacity = "0";
+        container.style.transition = "transform 0.55s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.35s ease, filter 0.35s ease";
+        container.style.opacity = "0.2";
+        container.style.filter = "blur(1px)";
+        container.style.willChange = "transform, opacity, filter";
+        container.style.backfaceVisibility = "hidden";
         
         if (isVoltar) {
-            container.style.transform = "translateX(100%)"; 
+            container.style.transform = "translate3d(100%, 0, 0)";
         } else {
-            container.style.transform = "translateX(-100%)"; 
+            container.style.transform = "translate3d(-100%, 0, 0)";
         }
 
         setTimeout(() => {
             window.location.href = url;
-        }, 400);
+        }, 550);
     }
 });
 
-// ================= SINCRONIZAÇÃO AUTOMÁTICA DOS LINKS DO BANCO =================
-document.addEventListener("DOMContentLoaded", async () => {
-    try {
-        // 1. Pede todas as categorias e links cadastrados no MySQL via FastAPI
-        const response = await fetch('http://127.0.0.1:8000/categorias/todas');
-        const dadosCategorias = await response.json();
-
-        // 2. Filtra a categoria correspondente a esta página (ex: "casa utilidades")
-        const categoriaAtual = dadosCategorias.find(cat => 
-            cat.categoria_nome.toLowerCase().includes("casa")
-        );
-
-        if (!categoriaAtual || !categoriaAtual.links) {
-            console.log("Nenhuma categoria correspondente encontrada no banco ou sem links.");
-            return;
-        }
-
-        // 3. Seleciona todos os produtos da página HTML
-        const produtosNaTela = document.querySelectorAll('.produto');
-
-        // 4. Mapeia por ordem para garantir que cada produto receba seu link exclusivo
-        produtosNaTela.forEach((elementoA, index) => {
-            if (categoriaAtual.links[index]) {
-                const linkDoBanco = categoriaAtual.links[index];
-                // Substitui o link da Shopee pelo link curto correspondente do banco
-                elementoA.href = linkDoBanco.short_url;
-            }
-        });
-
-        console.log("Links sincronizados com o MySQL com sucesso!");
-
-    } catch (erro) {
-        console.error("Erro ao conectar com a API do FastAPI:", erro);
-    }
-});

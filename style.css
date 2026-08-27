@@ -1,16 +1,29 @@
 /* ================= RESET GLOBAL ================= */
 * {
-    margin: 0 ;
-    padding: 7px;
+    margin: 0;
     box-sizing: border-box;
 }
 
-/* ================= BODY ================= */
+html, body {
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
 body {
     background-color: black;
     font-family: sans-serif;
     color: white;
-    overflow-x: hidden; /* Evita barra de rolagem horizontal durante o efeito */
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+}
+
+body.nav-transition #cronometro {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
 }
 
 /* ================= CORREÇÃO AGRESSIVA E AUMENTO DO LOGO ================= */
@@ -40,196 +53,50 @@ header img {
     object-fit: contain;
 }
 
-/* CONTAINER PRINCIPAL (FUNDO) */
-#overlay-tiktok {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(8px);
-    justify-content: center;
-    align-items: center;
-    z-index: 9999999;
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.4s ease-in-out;
-    display: none !important; /* Força ele a ficar escondido ao carregar */
-}
-
-#overlay-tiktok.active {
-    display: flex !important; /* Só mostra quando o JS ativar */
-    opacity: 1;
-    visibility: visible;
-}
-
-/* A CAIXINHA (MODAL) */
-#overlay-tiktok .box {
-    position: relative; 
-    background: #1a1a1a;
-    padding: 40px 25px;
-    border-radius: 24px;
-    width: 85%;
-    max-width: 340px;
-    text-align: center;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
-    transform: scale(0.8);
-    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-#overlay-tiktok.active .box {
-    transform: scale(1);
-}
-
-/* TEXTOS */
-#overlay-tiktok h2 {
-    font-size: 1.4rem;
-    margin-bottom: 12px;
-    color: #fff;
-}
-
-#overlay-tiktok p {
-    font-size: 0.95rem;
-    line-height: 1.5;
-    color: #aaa;
-    margin-bottom: 30px;
-}
-
-/* BOTÕES DO OVERLAY */
-#overlay-tiktok .buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-#overlay-tiktok .buttons button {
-    width: 100%;
-    padding: 14px;
-    border-radius: 12px;
-    font-size: 1rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    border: none;
-}
-
-#overlay-tiktok .buttons button:first-child {
-    background: #0088ff;
-    color: white;
-    box-shadow: 0 4px 15px rgba(0, 136, 255, 0.3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    white-space: normal; 
-    line-height: 1.2;
-}
-
-#overlay-tiktok .buttons button:first-child:active {
-    transform: scale(0.96);
-    background: #0077ee;
-}
-
-#overlay-tiktok .buttons button:last-child {
-    background: transparent;
-    color: #777;
-    font-size: 0.85rem;
-    text-decoration: underline;
-}
-
-/* Posicionamento do X */
-.fechar-x {
-    position: absolute;
-    top: 15px;
-    right: 20px;
-    font-size: 28px;
-    color: #666;
-    cursor: pointer;
-    line-height: 1;
-    transition: all 0.2s;
-    font-family: Arial, sans-serif;
-}
-
-.fechar-x:hover {
-    color: #fff;
-    transform: scale(1.2);
-}
-
-/* ELEMENTOS DE ALERTA */
-.emoji-alerta {
-    font-size: 40px;
-    margin-bottom: 10px;
-    display: inline-block;
-    animation: pulsarSirene 1.2s infinite ease-in-out;
-}
-
-@keyframes pulsarSirene {
-    0% { transform: scale(1); filter: drop-shadow(0 0 0px rgba(255, 0, 0, 0)); }
-    50% { transform: scale(1.15) rotate(10deg); filter: drop-shadow(0 0 15px rgba(255, 0, 0, 0.6)); }
-    100% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 0px rgba(255, 0, 0, 0)); }
-}
-
-/* TUTORIAL PONTILHADO */
-.tutorial-ios {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px dashed #555;
-    border-radius: 12px;
-    padding: 15px;
-    margin: 15px 0 25px 0;
-    text-align: left;
-}
-
-.hidden {
-    display: none !important;
-}
-
-.passo {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    color: #eee;
-    font-size: 0.9rem;
-    margin-bottom: 10px;
-    line-height: 1.4;
-}
-
-.passo::before {
-    content: "✓";
-    color: #0088ff;
-    font-weight: bold;
-    font-size: 1.1rem;
-}
-
-.passo b { color: #0088ff; }
-
 /* CRONÔMETRO */
 #cronometro {
     position: fixed;
     top: 0;
     left: 0;
+    right: 0;
     width: 100%;
+    max-width: none;
+    min-width: 0;
+    margin: 0;
     background-color: #bb0b0b;
     color: white;
     font-weight: bold;
     text-align: center;
-    padding: 5px 0;
+    padding: 8px 0 6px;
     z-index: 9999;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
     text-shadow: 1px 1px 2px black;
     font-family: 'Gill Sans', sans-serif;
-    display: flex;
+    display: none;
     flex-direction: column;
     align-items: center;
-    gap: 1px;
+    justify-content: center;
+    gap: 2px;
     font-size: 20px;
-    line-height: 3px;
+    line-height: 1.2;
 }
 
 #cronometro .titulo {
+    display: block;
     font-size: 18px;
     color: yellow;
     font-family: 'Arial Narrow';
+    margin: 0;
+    width: 100%;
+    text-align: center;
+}
+
+#cronometro #tempo {
+    display: block;
+    font-size: 20px;
+    letter-spacing: 1px;
+    width: 100%;
+    text-align: center;
 }
 
 @keyframes piscar {
@@ -249,43 +116,82 @@ header img {
 }
 
 .container {
-    width: 100%;       /* Ocupa a largura total disponível */
-    max-width: 320px;  /* Mas não passa de 320px (tamanho ideal pro celular) */
-    margin: 0 auto;    /* Centraliza na tela */
+    position: relative;
+    width: 100%;
+    max-width: 320px;
+    margin: 0 auto;
     text-align: center;
-    padding: 0 10px;   /* Adiciona uma pequena margem interna nas laterais */
-    
+    padding: 0;
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
+    animation: containerIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    will-change: transform, opacity, filter;
+    backface-visibility: hidden;
 }
 
-ul { margin-top: -32px; list-style: none; }
+@keyframes containerIn {
+    0% {
+        opacity: 0;
+        transform: translate3d(0, 14px, 0);
+    }
+    100% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+ul {
+    margin-top: -32px;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 0;
+}
+
+ul li {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
 
 /* ================= BOTÕES DE CATEGORIAS COM NEON FIXO ================= */
 ul a {
-    background-color: #EE4D2D;
+    background: linear-gradient(180deg, #ff6b3d 0%, #ee4d2d 100%);
     color: white;
-    padding: 15px;
     text-decoration: none;
     font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-    font-size: 22px; 
+    font-size: 22px;
     display: flex;
     align-items: center;
-    justify-content: center; 
+    justify-content: center;
     border-radius: 12px;
-    min-height: 80px; 
-    margin-bottom: 15px; /* Aumentei um pouco o espaço para o brilho não encostar no de baixo */
-    position: relative; 
-    padding-left: 65px;
-    transition: all 0.3s ease;
+    min-height: 80px;
+    margin-bottom: 15px;
+    position: relative;
+    padding: 15px 18px 15px 65px;
+    transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+                box-shadow 0.25s ease,
+                filter 0.25s ease,
+                opacity 0.25s ease,
+                background 0.25s ease;
+    width: min(100%, 290px);
+    margin-left: auto;
+    margin-right: auto;
+    will-change: transform, box-shadow, filter;
+    filter: saturate(1.05);
 
     /* BORDA NEON FIXA (AZUL DO OVERLAY) */
-    border: 2px solid #e6f7ff; 
+    border: 2px solid #e6f7ff;
     box-shadow: 0 0 15px rgba(238, 77, 45), inset 0 0 5px rgba(238, 77, 45);
 }
 
 /* Efeito ao clicar (opcional: ele brilha mais forte quando encosta) */
 ul a:active {
-    transform: scale(0.96);
+    transform: scale(0.985);
     box-shadow: 0 0 25px rgba(238, 77, 45);
+    transition-duration: 0.12s;
 }
 
 /* Imagem da bandeira fixa na esquerda */
@@ -299,7 +205,9 @@ ul a img {
 }
 
 ul a:hover {
-    transform: scale(1.1);
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 0 18px rgba(238, 77, 45), inset 0 0 6px rgba(238, 77, 45);
+    filter: saturate(1.12) brightness(1.04);
 }
 
 /* ANIMAÇÃO SHAKE */

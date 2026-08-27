@@ -1,16 +1,22 @@
 /* ================= RESET GLOBAL ================= */
 * {
     margin: 0;
-    padding: 7px;
     box-sizing: border-box;
 }
 
-/* ================= BODY ================= */
+html, body {
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
 body {
     background-color: black;
     font-family: sans-serif;
     color: white;
-    overflow-x: hidden; /* Evita barra de rolagem horizontal durante o efeito */
+    overflow-x: hidden;
 }
 
 header {
@@ -44,12 +50,16 @@ header img {
     position: fixed;
     top: 0;
     left: 0;
+    right: 0;
     width: 100%;
+    max-width: none;
+    min-width: 0;
+    margin: 0;
     background-color: #bb0b0b;
     color: white;
     font-weight: bold;
     text-align: center;
-    padding: 5px 0;
+    padding: 8px 0 6px;
     z-index: 9999;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
     text-shadow: 1px 1px 2px black;
@@ -57,15 +67,28 @@ header img {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1px;
+    justify-content: center;
+    gap: 2px;
     font-size: 20px;
-    line-height: 3px;
+    line-height: 1.2;
 }
 
 #cronometro .titulo {
+    display: block;
     font-size: 18px;
     color: yellow;
     font-family: 'Arial Narrow';
+    margin: 0;
+    width: 100%;
+    text-align: center;
+}
+
+#cronometro #tempo {
+    display: block;
+    font-size: 20px;
+    letter-spacing: 1px;
+    width: 100%;
+    text-align: center;
 }
 
 @keyframes piscar {
@@ -85,12 +108,60 @@ header img {
 }
 
 .container {
+    position: relative;
     text-align: center;
-    width: 320px;
+    width: 100%;
+    max-width: 320px;
     margin: 0 auto;
+    padding: 0;
+    transform: translate3d(0, 0, 0);
+    will-change: transform, opacity;
+    backface-visibility: hidden;
 }
 
-ul { margin-top: -32px; list-style: none; }
+ul {
+    margin-top: -32px;
+    list-style: none;
+    padding: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+ul li {
+    width: 100%;
+    display: block;
+    margin-bottom: 12px;
+}
+
+ul li p {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: min(100%, 290px);
+    margin: 0 auto 8px;
+    font-size: 15px;
+    line-height: 1.2;
+}
+
+ul li p strong {
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 72%;
+    color: #fff;
+    letter-spacing: 0.2px;
+    text-align: center;
+}
+
+ul li p button {
+    margin-left: 0;
+    flex-shrink: 0;
+    align-self: center;
+}
 
 ul a {
     background-color: #EE4D2D;
@@ -98,17 +169,16 @@ ul a {
     padding: 15px;
     text-decoration: none;
     font-family: sans-serif;
-    font-size: 17px; /* Ajustei levemente para caber melhor */
-    display: flex;    /* Mudado para flex para alinhar foto e texto lado a lado */
+    font-size: 17px;
+    display: flex;
     align-items: center;
     gap: 15px;
     border-radius: 12px;
     border: 1px solid white;
-    min-height: 80px; /* Em vez de max-height, usamos min-height para garantir que apareça */
+    min-height: 80px;
     transition: all 0.3s ease;
-    margin-bottom: 10px;
-
-      /* BORDA NEON FIXA (AZUL DO OVERLAY) */
+    margin: 0 auto 10px;
+    width: min(100%, 290px);
     border: 2px solid #e6f7ff; 
     box-shadow: 0 0 15px rgba(238, 77, 45), inset 0 0 5px rgba(238, 77, 45);
 }
